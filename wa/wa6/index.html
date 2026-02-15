@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design System</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-neutral:   #090C02;
+            --color-accent:    #D16014;
+            --color-primary:   #546D64;
+            --color-secondary: #64113F;
+            --color-white:     #FFFFFF;
+
+            --font: 'Noto Sans Mono', monospace;
+
+            --fs-xs:      0.64rem;
+            --fs-sm:      0.8rem;
+            --fs-base:    1rem;
+            --fs-h3:      1.25rem;
+            --fs-h2:      1.563rem;
+            --fs-h1:      1.953rem;
+            --fs-display: 2.441rem;
+
+            --sp-xs: 0.5rem;
+            --sp-sm: 1rem;
+            --sp-md: 1.5rem;
+            --sp-lg: 2rem;
+            --sp-xl: 3rem;
+
+            --radius: 2px;
+            --border: 1.5px solid var(--color-neutral);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font);
+            font-size: var(--fs-base);
+            line-height: 1.65;
+            background: var(--color-white);
+            color: var(--color-neutral);
+            padding: var(--sp-lg);
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: var(--sp-sm);
+            margin-bottom: var(--sp-xl);
+        }
+
+        .page-header h1 {
+            font-size: var(--fs-display);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+
+        .page-header .meta {
+            font-size: var(--fs-xs);
+            color: var(--color-primary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        section {
+            border-top: var(--border);
+            padding-top: var(--sp-md);
+            margin-bottom: var(--sp-xl);
+        }
+
+        section h2 {
+            font-size: var(--fs-h2);
+            font-weight: 700;
+            margin-bottom: var(--sp-md);
+        }
+
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: var(--sp-sm);
+        }
+
+        .swatch {
+            border: var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .swatch-color {
+            height: 100px;
+            display: flex;
+            align-items: flex-end;
+            padding: var(--sp-xs);
+        }
+
+        .cr-badge {
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: var(--radius);
+        }
+
+        .swatch-info {
+            padding: var(--sp-xs) var(--sp-sm);
+            border-top: var(--border);
+        }
+
+        .swatch-name {
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            display: block;
+        }
+
+        .swatch-hex {
+            font-size: var(--fs-xs);
+            color: var(--color-primary);
+        }
+
+        .type-stack > * + * {
+            border-top: 1px solid color-mix(in srgb, var(--color-neutral) 12%, transparent);
+            padding-top: var(--sp-sm);
+            margin-top: var(--sp-sm);
+        }
+
+        .type-row {
+            display: flex;
+            align-items: baseline;
+            gap: var(--sp-md);
+        }
+
+        .type-meta {
+            font-size: var(--fs-xs);
+            color: var(--color-primary);
+            min-width: 110px;
+            flex-shrink: 0;
+        }
+
+        h1.demo { font-size: var(--fs-h1); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
+        h2.demo { font-size: var(--fs-h2); font-weight: 700; color: var(--color-secondary); }
+        h3.demo { font-size: var(--fs-h3); font-weight: 600; color: var(--color-primary); }
+        p.demo-body { font-size: var(--fs-base); line-height: 1.65; }
+        p.demo-small { font-size: var(--fs-sm); color: var(--color-primary); }
+
+        .spacing-table {
+            width: auto;
+            border-collapse: collapse;
+        }
+
+        .spacing-table tr {
+            border-bottom: 1px solid color-mix(in srgb, var(--color-neutral) 12%, transparent);
+        }
+
+        .spacing-table td {
+            padding: var(--sp-xs) var(--sp-lg) var(--sp-xs) 0;
+            font-size: var(--fs-sm);
+        }
+
+        .spacing-table td:first-child { font-weight: 700; }
+        .spacing-table td:nth-child(2) { color: var(--color-primary); }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--sp-lg);
+        }
+
+        @media (max-width: 600px) {
+            .component-grid { grid-template-columns: 1fr; }
+        }
+
+        .component-group {
+            border: var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .component-group-label {
+            font-size: var(--fs-xs);
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: var(--sp-xs) var(--sp-sm);
+            background: var(--color-neutral);
+            color: var(--color-white);
+        }
+
+        .component-group-body {
+            padding: var(--sp-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--sp-sm);
+        }
+
+        .state-hint {
+            font-size: var(--fs-xs);
+            color: var(--color-primary);
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+        }
+
+        .btn {
+            display: inline-block;
+            font-family: var(--font);
+            font-size: var(--fs-sm);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-decoration: none;
+            padding: var(--sp-xs) var(--sp-md);
+            border-radius: var(--radius);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+        }
+
+        .btn-primary { background: var(--color-neutral); color: var(--color-white); border-color: var(--color-neutral); }
+        .btn-primary:hover { background: var(--color-secondary); border-color: var(--color-secondary); }
+        .btn-primary:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+        .btn-primary:active { transform: scale(0.97); }
+
+        .btn-secondary { background: transparent; color: var(--color-neutral); border-color: var(--color-neutral); }
+        .btn-secondary:hover { background: var(--color-neutral); color: var(--color-white); }
+        .btn-secondary:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+        .btn-secondary:active { transform: scale(0.97); }
+
+        .btn-accent { background: var(--color-accent); color: var(--color-white); border-color: var(--color-accent); }
+        .btn-accent:hover { background: color-mix(in srgb, var(--color-accent) 80%, black); border-color: color-mix(in srgb, var(--color-accent) 80%, black); }
+        .btn-accent:focus-visible { outline: 3px solid var(--color-neutral); outline-offset: 3px; }
+        .btn-accent:active { transform: scale(0.97); }
+
+        .link-demo { display: block; font-size: var(--fs-sm); font-weight: 600; }
+
+        a.link-default {
+            color: var(--color-secondary);
+            text-decoration: underline;
+            text-decoration-color: color-mix(in srgb, var(--color-secondary) 40%, transparent);
+            text-underline-offset: 3px;
+            transition: color 0.15s, text-decoration-color 0.15s;
+        }
+        a.link-default:hover { color: var(--color-accent); text-decoration-color: var(--color-accent); }
+        a.link-default:visited { color: var(--color-primary); text-decoration-color: var(--color-primary); }
+        a.link-default:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 2px; border-radius: 1px; }
+
+        .input-demo {
+            width: 100%;
+            font-family: var(--font);
+            font-size: var(--fs-sm);
+            padding: var(--sp-xs) var(--sp-sm);
+            border: 2px solid var(--color-neutral);
+            border-radius: var(--radius);
+            background: var(--color-white);
+            color: var(--color-neutral);
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+        }
+        .input-demo::placeholder { color: var(--color-primary); opacity: 0.8; }
+        .input-demo:hover { border-color: var(--color-primary); }
+        .input-demo:focus {
+            border-color: var(--color-secondary);
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-secondary) 30%, transparent),
+                        0 0 0 2px var(--color-secondary);
+            background: color-mix(in srgb, var(--color-secondary) 4%, white);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header class="page-header">
+        <h1>Design System</h1>
+    </header>
+
+    <section aria-labelledby="palette-heading">
+        <h2 id="palette-heading">Color Palette</h2>
+        <div class="palette-grid">
+
+            <div class="swatch">
+                <div class="swatch-color" style="background: #090C02;">
+                    <span class="cr-badge" style="background:#fff; color:#090C02;">19.71:1</span>
+                </div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Pitch Black</span>
+                    <span class="swatch-hex">#090C02 — Neutral</span>
+                </div>
+            </div>
+
+            <div class="swatch">
+                <div class="swatch-color" style="background: #64113F;">
+                    <span class="cr-badge" style="background:#fff; color:#64113F;">12.39:1</span>
+                </div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Crimson Violet</span>
+                    <span class="swatch-hex">#64113F — Secondary</span>
+                </div>
+            </div>
+
+            <div class="swatch">
+                <div class="swatch-color" style="background: #546D64;">
+                    <span class="cr-badge" style="background:#fff; color:#546D64;">5.60:1</span>
+                </div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Granite</span>
+                    <span class="swatch-hex">#546D64 — Primary</span>
+                </div>
+            </div>
+
+            <div class="swatch">
+                <div class="swatch-color" style="background: #D16014;">
+                    <span class="cr-badge" style="background:#fff; color:#D16014;">3.89:1</span>
+                </div>
+                <div class="swatch-info">
+                    <span class="swatch-name">Chocolate</span>
+                    <span class="swatch-hex">#D16014 — Accent</span>
+                </div>
+            </div>
+
+            <div class="swatch">
+                <div class="swatch-color" style="background: #FFFFFF; border-bottom: var(--border);">
+                    <span class="cr-badge" style="background:#090C02; color:#fff;">—</span>
+                </div>
+                <div class="swatch-info">
+                    <span class="swatch-name">White</span>
+                    <span class="swatch-hex">#FFFFFF — Background</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section aria-labelledby="type-heading">
+        <h2 id="type-heading">Typography</h2>
+        <div class="type-stack">
+            <div class="type-row">
+                <h1 class="demo">The Archive.</h1>
+            </div>
+            <div class="type-row">
+                <h2 class="demo">Systems &amp; Structures.</h2>
+            </div>
+            <div class="type-row">
+                <h3 class="demo">Cultural Technology.</h3>
+            </div>
+            <div class="type-row">
+                <p class="demo-body">Noto Sans Mono at base size.</p>
+            </div>
+            <div class="type-row">
+                <p class="demo-small">For annotations, captions, and metadata.</p>
+            </div>
+        </div>
+    </section>
+
+    <section aria-labelledby="spacing-heading">
+        <h2 id="spacing-heading">Spacing System</h2>
+        <table class="spacing-table" aria-label="Spacing scale">
+            <tbody>
+                <tr><td>--sp-xs</td><td>8px</td></tr>
+                <tr><td>--sp-sm</td><td>16px</td></tr>
+                <tr><td>--sp-md</td><td>24px</td></tr>
+                <tr><td>--sp-lg</td><td>32px</td></tr>
+                <tr><td>--sp-xl</td><td>48px</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section aria-labelledby="comp-heading">
+        <h2 id="comp-heading">Interactive Components</h2>
+        <div class="component-grid">
+
+            <div class="component-group">
+                <div class="component-group-label">Buttons</div>
+                <div class="component-group-body">
+                    <div>
+                        <span class="state-hint">Primary</span>
+                        <div style="margin-top: var(--sp-xs);"><a href="#" class="btn btn-primary">Primary Action</a></div>
+                    </div>
+                    <div>
+                        <span class="state-hint">Secondary</span>
+                        <div style="margin-top: var(--sp-xs);"><a href="#" class="btn btn-secondary">Secondary Action</a></div>
+                    </div>
+                    <div>
+                        <span class="state-hint">Accent</span>
+                        <div style="margin-top: var(--sp-xs);"><a href="#" class="btn btn-accent">Accent Action</a></div>
+                    </div>
+                    <p class="state-hint" style="margin-top: var(--sp-xs);">Hover · Focus (Tab) · Active</p>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: var(--sp-sm);">
+
+                <div class="component-group">
+                    <div class="component-group-label">Links</div>
+                    <div class="component-group-body">
+                        <a href="#" class="link-demo link-default">Default link state</a>
+                        <a href="#visited-demo" class="link-demo link-default" style="color: var(--color-primary); text-decoration-color: var(--color-primary);">Visited link state</a>
+                        <p class="state-hint">Hover · Visited · Focus (Tab)</p>
+                    </div>
+                </div>
+
+                <div class="component-group">
+                    <div class="component-group-label">Form Input</div>
+                    <div class="component-group-body">
+                        <label for="demo-input" class="state-hint">Text field</label>
+                        <input id="demo-input" class="input-demo" type="text" placeholder="Type here…" />
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+</div>
+</body>
+</html>
