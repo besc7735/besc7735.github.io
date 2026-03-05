@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Flexbox Tasks</title>
+    <style>
+      nav, .flex2, .flex3 {
+        margin-bottom: 20px;
+      }
+
+      nav ul {
+        max-width: 750px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        justify-content: space-between;
+      }
+      nav a:link,
+      nav a:visited {
+        background-color: #4d7298;
+        border: 2px solid #77a6b6;
+        border-radius: 0.5em;
+        color: white;
+        padding: 0.5em;
+        display: inline-block;
+        text-decoration: none;
+      }
+
+      .flex2 {
+        max-width: 750px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+      }
+      .flex2 li {
+        background-color: #4d7298;
+        border: 2px solid #77a6b6;
+        border-radius: 0.5em;
+        color: white;
+        padding: 0.5em;
+        flex: 1;
+      }
+      .flex2 li:first-child {
+        flex: 2;
+      }
+
+      .flex3 {
+        width: 450px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .flex3 li {
+        background-color: #4d7298;
+        border: 2px solid #77a6b6;
+        border-radius: 0.5em;
+        color: white;
+        padding: 0.5em;
+        margin: 0.5em;
+        flex: auto;
+      }
+    </style>
+  </head>
+  <body>
+
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/products">Our Products</a></li>
+        <li><a href="/contact">Contact Us</a></li>
+      </ul>
+    </nav>
+
+    <ul class="flex2">
+      <li>I am small</li>
+      <li>I have more content than the very small item.</li>
+      <li>I have lots of content. So much content that I don't know where it is all going to go. I'm glad that CSS is pretty good at dealing with situations where we end up with more words than expected!</li>
+    </ul>
+
+    <ul class="flex3">
+      <li>Turnip</li>
+      <li>greens</li>
+      <li>yarrow</li>
+      <li>ricebean</li>
+      <li>rutabaga</li>
+      <li>endive</li>
+      <li>cauliflower</li>
+      <li>sea lettuce</li>
+      <li>kohlrabi</li>
+      <li>amaranth</li>
+    </ul>
+
+  </body>
+</html>
