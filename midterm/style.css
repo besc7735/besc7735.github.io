@@ -112,7 +112,7 @@ nav ul a.active::after {
 }
 
 .about-photo img {
-  width: 280px;
+  width: 420px;
   height: auto;
   border-radius: 4px;
 }
@@ -180,13 +180,7 @@ nav ul a.active::after {
   height: 260px;
   object-fit: cover;
   display: block;
-  filter: brightness(0.92);
-  transition: filter 0.3s ease, transform 0.3s ease;
-}
-
-.photo-grid figure:hover img {
   filter: brightness(1);
-  transform: scale(1.02);
 }
 
 /* ============================================
