@@ -96,11 +96,25 @@ nav ul a.active::after {
   flex: 1;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 3rem;
+  gap: 3rem;
 }
 
 .about-content {
   max-width: 640px;
+}
+
+.about-photo {
+  flex-shrink: 0;
+  margin-left: auto;
+  margin-right: 2rem;
+}
+
+.about-photo img {
+  width: 280px;
+  height: auto;
+  border-radius: 4px;
 }
 
 .about-content h1 {
