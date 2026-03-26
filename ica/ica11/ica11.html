@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Silly Story Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anaheim&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Anaheim', sans-serif;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: #414535;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+    }
+
+    .story-card {
+      max-width: 640px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 3.75rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    label {
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      opacity: 0.7;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    input[type="text"] {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      font-family: 'Anaheim', sans-serif;
+      font-size: 1rem;
+      padding: 0.6rem 0.85rem;
+      border-radius: 4px;
+      width: 60%;
+      display: block;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]::placeholder {
+      opacity: 0.4;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.7);
+    }
+
+    fieldset {
+      border: 0;
+      padding: 0;
+      margin: 0;
+    }
+
+    legend {
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      opacity: 0.7;
+      margin-bottom: 0.5rem;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.85;
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      accent-color: #FFCF56;
+    }
+
+    button.generate {
+      font-family: 'Anaheim', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: #414535;
+      background: #FFCF56;
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 4px;
+      cursor: pointer;
+      align-self: flex-start;
+      transition: opacity 0.2s;
+    }
+
+    button.generate:hover {
+      opacity: 0.85;
+    }
+
+    .story {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      line-height: 1.7;
+      background: rgba(255, 207, 86, 0.15);
+      border-left: 3px solid #FFCF56;
+      padding: 1.25rem 1.5rem;
+      border-radius: 4px;
+      visibility: hidden;
+      color: #ffffff;
+    }
+
+    :focus-visible {
+      outline: 2px solid rgba(255,255,255,0.8);
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 2rem 1.5rem;
+      }
+
+      input[type="text"] {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main>
+    <div class="story-card">
+      <h1>Silly Story Generator</h1>
+
+      <div class="controls">
+        <div>
+          <label for="custom-name">Enter custom name:</label>
+          <input id="custom-name" type="text" placeholder="" />
+        </div>
+
+        <fieldset>
+          <legend>Choose locale:</legend>
+          <div class="radio-group">
+            <label><input id="us" type="radio" name="uk-us" value="us" checked /> US</label>
+            <label><input id="uk" type="radio" name="uk-us" value="uk" /> UK</label>
+          </div>
+        </fieldset>
+
+        <button class="generate">Generate random story</button>
+      </div>
+
+      <p class="story"></p>
+    </div>
+  </main>
+
+  <script>
+    const customName = document.getElementById("custom-name");
+    const generateBtn = document.querySelector(".generate");
+    const story = document.querySelector(".story");
+
+    function randomValueFromArray(array) {
+      return array[Math.floor(Math.random() * array.length)];
+    }
+
+    const characters = ["my neighbor Greg", "a local dentist", "the guy from the pizza place"];
+    const places = ["the grocery store", "a parking garage", "the public library"];
+    const events = [
+      "got into an argument with a self-checkout machine and lost",
+      "tried to pet someone's dog and fell into a fountain",
+      "accidentally walked into a job interview and just went with it",
+    ];
+
+    function returnRandomStoryString() {
+      const char  = randomValueFromArray(characters);
+      const place = randomValueFromArray(places);
+      const event = randomValueFromArray(events);
+
+      return `It was 94 Fahrenheit outside, so ${char} decided to run a quick errand. They headed over to ${place}, which seemed like a normal enough idea, until they ${event}. Sam watched the whole thing unfold and was not even a little surprised — ${char} weighs 300 pounds and somehow this kind of thing happens every week.`;
+    }
+
+    generateBtn.addEventListener("click", () => {
+      let newStory = returnRandomStoryString();
+
+      if (customName.value !== "") {
+        newStory = newStory.replace("Sam", customName.value);
+      }
+
+      if (document.getElementById("uk").checked) {
+        newStory = newStory.replace("300 pounds", `${Math.round(300 / 14)} stone`);
+        newStory = newStory.replace("94 Fahrenheit", `${Math.round((94 - 32) * 5 / 9)} Celsius`);
+      }
+
+      story.textContent = newStory;
+      story.style.visibility = "visible";
+    });
+  </script>
+
+</body>
+</html>
