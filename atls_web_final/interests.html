@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interests — Ben Schweiger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anaheim:wght@400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .track-list {
+      display: flex;
+      flex-direction: column;
+      margin-top: 3rem;
+    }
+    .track-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.15s;
+    }
+    .track-row:first-child { border-top: 1px solid rgba(255,255,255,0.08); }
+    .track-row:hover { opacity: 0.6; }
+    .track-num {
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+      width: 16px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .track-row.playing .track-num { visibility: hidden; }
+    .track-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: transparent;
+      flex-shrink: 0;
+      margin-left: -23px;
+    }
+    .track-row.playing .track-dot {
+      background: #fff;
+      animation: pip 1.4s ease-in-out infinite;
+    }
+    @keyframes pip { 0%,100%{opacity:1} 50%{opacity:0.25} }
+    .track-name { font-size: 15px; font-weight: 400; opacity: 0.75; }
+    .track-row.playing .track-name { opacity: 1; }
+
+    .vol-block {
+      display: none;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+      max-width: 480px;
+    }
+    .vol-number {
+      font-size: 4.5rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .vol-number span {
+      font-size: 1.4rem;
+      font-weight: 400;
+      opacity: 0.35;
+      margin-left: 4px;
+    }
+    .vol-sublabel {
+      font-size: 12px;
+      opacity: 0.3;
+      letter-spacing: 0.06em;
+      margin-top: 4px;
+    }
+    .step { display: none; flex-direction: column; gap: 10px; }
+    .step.on { display: flex; }
+    .step-label { font-size: 12px; opacity: 0.35; }
+
+    input[type=range]#vol-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 2px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 1px;
+      outline: none;
+      cursor: grab;
+    }
+    input[type=range]#vol-slider:active { cursor: grabbing; }
+    input[type=range]#vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: grab;
+    }
+    input[type=range]#vol-slider:active::-webkit-slider-thumb { cursor: grabbing; }
+    input[type=range]#vol-slider::-moz-range-thumb {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      border: none;
+    }
+
+    .btn-arena { position: relative; height: 40px; }
+    #confirm-btn {
+      position: absolute;
+      top: 0; left: 0;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.8);
+      font-family: 'Anaheim', sans-serif;
+      font-size: 14px;
+      padding: 7px 20px;
+      cursor: pointer;
+      border-radius: 2px;
+      white-space: nowrap;
+      transition: border-color 0.1s, color 0.1s;
+    }
+    #confirm-btn:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
+
+    #type-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      font-family: 'Anaheim', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 500;
+      width: 110px;
+      outline: none;
+      padding: 2px 0;
+      -moz-appearance: textfield;
+    }
+    #type-input::-webkit-inner-spin-button,
+    #type-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    #type-input::placeholder { color: rgba(255,255,255,0.1); }
+    #type-input:focus { border-bottom-color: rgba(255,255,255,0.6); }
+
+    .vol-status { font-size: 13px; opacity: 0.4; min-height: 18px; }
+    .vol-status.done { opacity: 0.7; }
+  </style>
+</head>
+<body class="page-interests">
+
+  <nav aria-label="Main navigation">
+    <a href="index.html" class="nav-name">Ben Schweiger</a>
+    <ul role="list">
+      <li><a href="index.html">about</a></li>
+      <li><a href="interests.html" class="active" aria-current="page">interests</a></li>
+      <li><a href="contact.html">contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="interests-main">
+    <div class="interests-content">
+      <p class="interests-bio">i love to learn. i'm an avid reader, writer, and video essay connoisseur. i also love to make things, be it through photography, writing research papers, or experimenting with video editing.</p>
+
+      <div class="photo-grid">
+        <figure>
+          <img src="deadstreaming.png" alt="a photo of the front of a research paper titled Deadstreaming: The Israel-Gaza conflict, The Fall of the Old Guard, and the Battle for Truth" />
+        </figure>
+        <figure>
+          <img src="resolve.jpg" alt="a photo of a populated video editing timeline with audio and video" />
+        </figure>
+        <figure>
+          <img src="doctorswarning.png" alt="a grainy dark photo of ibuprofen pills in a medication jar" />
+        </figure>
+        <figure>
+          <img src="juliues.png" alt="a stylish black and white portrait of a black man with short dreads and a collared shirt with colorful donuts on it" />
+        </figure>
+        <figure>
+          <img src="americanwitness.png" alt="a screenshot of a research paper describing audience insights for a crime mapping platform" />
+        </figure>
+        <figure>
+          <img src="truck.png" alt="a landscape photo of an old truck sitting outside a sunny ranch in rural utah" />
+        </figure>
+      </div>
+
+      <p class="interests-bio interests-bio--second">i also love experimental art and music.</p>
+
+      <div class="photo-grid photo-grid--two">
+        <figure>
+          <img src="speedometer.jpg" alt="an album cover of a big green oil tank with a staircase swooping down the side. the words speedometer PRIVATE are in white text on the side of the tank" />
+        </figure>
+        <figure>
+          <img src="cat.jpg" alt="a photo of a green artistic cat on a red background, with piercing yellow eyes" />
+        </figure>
+        <figure>
+          <img src="200electronica.jpg" alt="an old 3d video game rendering of a shimmery blue bird flying over a red wasteland" />
+        </figure>
+        <figure>
+          <img src="tricky.png" alt="a rustic album cover that says the word tricky in all uppercase letters, with a faded red background" />
+        </figure>
+        <figure>
+          <img src="afx.png" alt="album art of the iconic aphex twin logo" />
+        </figure>
+        <figure>
+          <img src="moon.jpg" alt="a minimalist edited photo of a flat wheatfield on a summer day, with a big full moon rising in the background" />
+        </figure>
+      </div>
+
+      <audio id="player" preload="none"></audio>
+
+      <div class="track-list" id="track-list"></div>
+
+      <div class="vol-block" id="vol-block">
+        <div>
+          <div class="vol-number" id="vol-display">50<span>%</span></div>
+          <p class="vol-sublabel" id="vol-sublabel">volume</p>
+        </div>
+
+        <div class="step" id="step1">
+          <p class="step-label" id="s1-hint">drag to set your volume</p>
+          <input type="range" id="vol-slider" min="0" max="100" value="50" step="1" />
+        </div>
+
+        <div class="step" id="step2">
+          <p class="step-label" id="s2-hint">confirm your volume</p>
+          <div class="btn-arena" id="btn-arena">
+            <button id="confirm-btn">confirm</button>
+          </div>
+        </div>
+
+        <div class="step" id="step3">
+          <p class="step-label" id="s3-hint">type the exact number and press enter</p>
+          <input type="number" id="type-input" min="0" max="100" placeholder="0–100" autocomplete="off" />
+        </div>
+
+        <p class="vol-status" id="vol-status"></p>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    const tracks = [
+      { file: 'Speedometer. - New Hawaii [VleVayJfJx8].m4a', name: 'Speedometer. — New Hawaii' },
+      { file: 'ESPRIT - Secret [TSNUjN4fISw].m4a',           name: 'ESPRIT — Secret' },
+      { file: 'Feed Me [IlB3Exvb4NM].m4a',                   name: 'Feed Me' },
+      { file: 'Aphex Twin - Heliosphan [0Z4cLmbw6q0].m4a',   name: 'Aphex Twin — Heliosphan' },
+    ];
+
+    const player     = document.getElementById('player');
+    const trackList  = document.getElementById('track-list');
+    const volBlock   = document.getElementById('vol-block');
+    const volDisp    = document.getElementById('vol-display');
+    const volSub     = document.getElementById('vol-sublabel');
+    const step1      = document.getElementById('step1');
+    const step2      = document.getElementById('step2');
+    const step3      = document.getElementById('step3');
+    const slider     = document.getElementById('vol-slider');
+    const s1hint     = document.getElementById('s1-hint');
+    const s2hint     = document.getElementById('s2-hint');
+    const s3hint     = document.getElementById('s3-hint');
+    const confirmBtn = document.getElementById('confirm-btn');
+    const btnArena   = document.getElementById('btn-arena');
+    const typeInput  = document.getElementById('type-input');
+    const statusEl   = document.getElementById('vol-status');
+
+    let currentVol  = 50;
+    let savedTarget = 50;
+    let cStep       = 0;
+    let clearTimer  = null;
+    let dragging    = false;
+    let dragVal     = 50;
+
+    player.volume = 0.5;
+
+    tracks.forEach((t, i) => {
+      const row = document.createElement('div');
+      row.className = 'track-row';
+      row.innerHTML = `<span class="track-num">${i + 1}</span><span class="track-dot"></span><span class="track-name">${t.name}</span>`;
+      row.addEventListener('click', () => playTrack(i));
+      trackList.appendChild(row);
+    });
+
+    function playTrack(i) {
+      document.querySelectorAll('.track-row').forEach((r, j) => r.classList.toggle('playing', j === i));
+      player.src = tracks[i].file;
+      player.volume = currentVol / 100;
+      player.play();
+      if (cStep === 0) startChallenge();
+    }
+
+    function setVolDisplay(v) {
+      volDisp.innerHTML = `${v}<span>%</span>`;
+    }
+
+    function showOnly(el) {
+      [step1, step2, step3].forEach(s => s.classList.remove('on'));
+      if (el) el.classList.add('on');
+    }
+
+    function startChallenge() {
+      cStep = 1;
+      volBlock.style.display = 'flex';
+      slider.value = currentVol;
+      dragVal = currentVol;
+      setVolDisplay(currentVol);
+      volSub.textContent = 'volume';
+      statusEl.textContent = '';
+      statusEl.classList.remove('done');
+      showOnly(step1);
+      s1hint.textContent = 'drag to set your volume';
+    }
+
+    slider.addEventListener('mousedown', () => { dragging = true; });
+    slider.addEventListener('touchstart', () => { dragging = true; }, { passive: true });
+    slider.addEventListener('input', () => {
+      if (!dragging) return;
+      dragVal = parseInt(slider.value);
+      setVolDisplay(dragVal);
+      s1hint.textContent = `${dragVal}% — let go`;
+    });
+
+    function onRelease() {
+      if (!dragging) return;
+      dragging = false;
+      if (cStep !== 1) return;
+      savedTarget = dragVal;
+      setVolDisplay(currentVol);
+      slider.value = currentVol;
+      s1hint.textContent = `snapped back. (${savedTarget}% saved)`;
+      setTimeout(() => {
+        cStep = 2;
+        volSub.textContent = `target: ${savedTarget}%`;
+        confirmBtn.style.left = '0px';
+        s2hint.textContent = `confirm ${savedTarget}%`;
+        statusEl.textContent = '';
+        showOnly(step2);
+      }, 700);
+    }
+
+    slider.addEventListener('mouseup', onRelease);
+    slider.addEventListener('touchend', onRelease);
+    document.addEventListener('mouseup', onRelease);
+
+    let fleeTimer = null;
+    confirmBtn.addEventListener('mouseenter', () => {
+      if (cStep !== 2) return;
+      fleeTimer = setTimeout(() => {
+        const maxX = btnArena.offsetWidth - confirmBtn.offsetWidth - 4;
+        const cur  = parseFloat(confirmBtn.style.left) || 0;
+        let nx = cur < maxX / 2 ? maxX : 0;
+        nx = Math.max(0, Math.min(maxX, nx + (Math.random() - 0.5) * 50));
+        confirmBtn.style.left = Math.round(nx) + 'px';
+        s2hint.textContent = 'almost...';
+      }, 96);
+    });
+    confirmBtn.addEventListener('mouseleave', () => { clearTimeout(fleeTimer); });
+
+    confirmBtn.addEventListener('click', () => {
+      if (cStep !== 2) return;
+      cStep = 3;
+      typeInput.value = '';
+      s3hint.textContent = `type ${savedTarget} exactly, then press enter`;
+      statusEl.textContent = '';
+      showOnly(step3);
+      typeInput.focus();
+      startClearTimer();
+    });
+
+    function startClearTimer() {
+      if (clearTimer) clearInterval(clearTimer);
+      clearTimer = setInterval(() => {
+        if (cStep === 3 && typeInput.value !== '') {
+          typeInput.value = '';
+          s3hint.textContent = `cleared — type ${savedTarget} again`;
+        }
+      }, 200);
+    }
+
+    typeInput.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || cStep !== 3) return;
+      const typed = parseInt(typeInput.value);
+      if (typed === savedTarget) {
+        clearInterval(clearTimer);
+        applyVolume(savedTarget);
+      } else {
+        typeInput.value = '';
+        s3hint.textContent = `wrong — type ${savedTarget} exactly`;
+      }
+    });
+
+    function applyVolume(v) {
+      cStep = 4;
+      currentVol = v;
+      player.volume = v / 100;
+      setVolDisplay(v);
+      volSub.textContent = 'volume';
+      showOnly(null);
+      statusEl.textContent = `volume set to ${v}%.`;
+      statusEl.classList.add('done');
+    }
+  </script>
+
+</body>
+</html>

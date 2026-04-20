@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music — Ben Schweiger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anaheim:wght@400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── page layout ── */
+    .music-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      padding: 3rem 2.5rem 4rem;
+      max-width: 680px;
+    }
+
+    /* ── track list ── */
+    .track-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .track-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.15s;
+    }
+    .track-row:first-child { border-top: 1px solid rgba(255,255,255,0.06); }
+    .track-row:hover { opacity: 0.7; }
+
+    .track-index {
+      font-size: 12px;
+      color: rgba(255,255,255,0.2);
+      width: 18px;
+      text-align: right;
+      flex-shrink: 0;
+      transition: opacity 0.15s;
+    }
+    .track-row.playing .track-index { opacity: 0; }
+
+    .track-pip {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: transparent;
+      flex-shrink: 0;
+      margin-left: -21px; /* overlaps index slot */
+      transition: background 0.2s;
+    }
+    .track-row.playing .track-pip {
+      background: currentColor;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .track-name {
+      font-size: 15px;
+      font-weight: 400;
+      flex: 1;
+    }
+
+    .track-duration {
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+    }
+
+    /* ── volume section ── */
+    .vol-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .vol-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .vol-label-text {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.08em;
+    }
+
+    .vol-number {
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .vol-pct {
+      font-size: 20px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .vol-target-line {
+      font-size: 12px;
+      color: rgba(255,255,255,0.2);
+      display: none;
+    }
+    .vol-target-line span { color: rgba(255,255,255,0.5); }
+
+    .step-area { display: none; flex-direction: column; gap: 8px; }
+    .step-area.visible { display: flex; }
+
+    .step-hint {
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+    }
+
+    /* slider */
+    .slider-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type=range]#vol-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 2px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 1px;
+      outline: none;
+      cursor: grab;
+    }
+    input[type=range]#vol-slider:active { cursor: grabbing; }
+    input[type=range]#vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      cursor: grab;
+    }
+    input[type=range]#vol-slider:active::-webkit-slider-thumb { cursor: grabbing; }
+    input[type=range]#vol-slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      border: none;
+      cursor: grab;
+    }
+
+    /* confirm button */
+    .btn-arena {
+      position: relative;
+      height: 44px;
+      width: 100%;
+    }
+
+    #confirm-btn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.7);
+      font-family: 'Anaheim', sans-serif;
+      font-size: 14px;
+      padding: 8px 20px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: border-color 0.1s, color 0.1s, left 0.08s ease-out;
+      white-space: nowrap;
+    }
+    #confirm-btn:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+
+    /* type input */
+    #type-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-family: 'Anaheim', sans-serif;
+      font-size: 32px;
+      font-weight: 500;
+      width: 120px;
+      outline: none;
+      padding: 4px 0;
+      -moz-appearance: textfield;
+    }
+    #type-input::-webkit-inner-spin-button,
+    #type-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    #type-input::placeholder { color: rgba(255,255,255,0.12); }
+    #type-input:focus { border-bottom-color: rgba(255,255,255,0.5); }
+
+    .status-msg {
+      font-size: 13px;
+      color: rgba(255,255,255,0.35);
+      min-height: 18px;
+    }
+    .status-msg.success { color: rgba(255,255,255,0.6); }
+  </style>
+</head>
+<body class="page-music">
+
+  <nav aria-label="Main navigation">
+    <a href="index.html" class="nav-name">Ben Schweiger</a>
+    <ul role="list">
+      <li><a href="index.html">about</a></li>
+      <li><a href="interests.html">interests</a></li>
+      <li><a href="music.html" class="active" aria-current="page">music</a></li>
+      <li><a href="contact.html">contact</a></li>
+    </ul>
+  </nav>
+
+  <main class="music-main">
+
+    <!-- hidden audio element -->
+    <audio id="player" preload="none"></audio>
+
+    <!-- track list -->
+    <div class="track-list" id="track-list"></div>
+
+    <!-- volume control block -->
+    <div class="vol-block">
+      <div>
+        <p class="vol-label-text">volume</p>
+        <div class="vol-header">
+          <span class="vol-number" id="vol-display">50</span>
+          <span class="vol-pct">%</span>
+        </div>
+        <p class="vol-target-line" id="vol-target-line">
+          target: <span id="vol-target-val">—</span>%
+        </p>
+      </div>
+
+      <!-- step 1: slider -->
+      <div class="step-area" id="step1">
+        <p class="step-hint" id="s1-hint">drag to set your volume</p>
+        <div class="slider-wrap">
+          <input type="range" id="vol-slider" min="0" max="100" value="50" step="1" />
+        </div>
+      </div>
+
+      <!-- step 2: runaway button -->
+      <div class="step-area" id="step2">
+        <p class="step-hint" id="s2-hint">confirm your volume</p>
+        <div class="btn-arena" id="btn-arena">
+          <button id="confirm-btn">confirm</button>
+        </div>
+      </div>
+
+      <!-- step 3: type it -->
+      <div class="step-area" id="step3">
+        <p class="step-hint" id="s3-hint">type the exact number and press enter</p>
+        <input type="number" id="type-input" min="0" max="100" placeholder="0–100" autocomplete="off" />
+      </div>
+
+      <p class="status-msg" id="status-msg"></p>
+    </div>
+
+  </main>
+
+  <script>
+    const tracks = [
+      { file: 'Speedometer. - New Hawaii [VleVayJfJx8].m4a', name: 'Speedometer. — New Hawaii' },
+      { file: 'ESPRIT - Secret [TSNUjN4fISw].m4a',           name: 'ESPRIT — Secret' },
+      { file: 'Feed Me [IlB3Exvb4NM].m4a',                   name: 'Feed Me' },
+      { file: 'Aphex Twin - Heliosphan [0Z4cLmbw6q0].m4a',   name: 'Aphex Twin — Heliosphan' },
+    ];
+
+    const player   = document.getElementById('player');
+    const trackList= document.getElementById('track-list');
+    const volDisp  = document.getElementById('vol-display');
+    const targetLine= document.getElementById('vol-target-line');
+    const targetVal = document.getElementById('vol-target-val');
+    const step1    = document.getElementById('step1');
+    const step2    = document.getElementById('step2');
+    const step3    = document.getElementById('step3');
+    const slider   = document.getElementById('vol-slider');
+    const s1hint   = document.getElementById('s1-hint');
+    const s2hint   = document.getElementById('s2-hint');
+    const s3hint   = document.getElementById('s3-hint');
+    const confirmBtn= document.getElementById('confirm-btn');
+    const btnArena = document.getElementById('btn-arena');
+    const typeInput= document.getElementById('type-input');
+    const statusMsg= document.getElementById('status-msg');
+
+    let currentIdx  = -1;
+    let currentVol  = 50;   // the actual applied volume (0–100)
+    let savedTarget = 50;   // what the user chose in step 1
+    let challengeStep = 0;  // 0=idle, 1,2,3=steps, 4=done
+    let clearTimer  = null;
+    let isDragging  = false;
+    let dragVal     = 50;
+
+    player.volume = currentVol / 100;
+
+    // ── build track rows ──
+    tracks.forEach((t, i) => {
+      const row = document.createElement('div');
+      row.className = 'track-row';
+      row.dataset.idx = i;
+      row.innerHTML = `
+        <span class="track-index">${i + 1}</span>
+        <span class="track-pip"></span>
+        <span class="track-name">${t.name}</span>
+      `;
+      row.addEventListener('click', () => playTrack(i));
+      trackList.appendChild(row);
+    });
+
+    function playTrack(i) {
+      document.querySelectorAll('.track-row').forEach((r, j) => {
+        r.classList.toggle('playing', j === i);
+      });
+      currentIdx = i;
+      player.src = tracks[i].file;
+      player.volume = currentVol / 100;
+      player.play();
+
+      if (challengeStep === 0) startChallenge();
+    }
+
+    // ── challenge flow ──
+    function startChallenge() {
+      challengeStep = 1;
+      slider.value = currentVol;
+      dragVal = currentVol;
+      s1hint.textContent = 'drag to set your volume';
+      statusMsg.textContent = '';
+      statusMsg.classList.remove('success');
+      showStep(1);
+    }
+
+    function showStep(n) {
+      [step1, step2, step3].forEach((el, i) => {
+        el.classList.toggle('visible', i + 1 === n);
+      });
+    }
+
+    function hideAllSteps() {
+      [step1, step2, step3].forEach(el => el.classList.remove('visible'));
+    }
+
+    // ── step 1: slider ──
+    slider.addEventListener('mousedown', () => { isDragging = true; });
+    slider.addEventListener('touchstart', () => { isDragging = true; }, { passive: true });
+
+    slider.addEventListener('input', () => {
+      if (!isDragging) return;
+      dragVal = parseInt(slider.value);
+      volDisp.textContent = dragVal;
+      s1hint.textContent = `${dragVal}% — release to lock in`;
+    });
+
+    function onSliderRelease() {
+      if (!isDragging) return;
+      isDragging = false;
+      if (challengeStep !== 1) return;
+
+      savedTarget = dragVal;
+
+      // snap back visually
+      volDisp.textContent = currentVol;
+      slider.value = currentVol;
+      s1hint.textContent = `snapped back. (${savedTarget}% locked in)`;
+
+      setTimeout(() => {
+        challengeStep = 2;
+        targetLine.style.display = 'block';
+        targetVal.textContent = savedTarget;
+        positionBtn(true);
+        s2hint.textContent = `confirm ${savedTarget}%`;
+        statusMsg.textContent = '';
+        showStep(2);
+      }, 700);
+    }
+
+    slider.addEventListener('mouseup', onSliderRelease);
+    slider.addEventListener('touchend', onSliderRelease);
+    document.addEventListener('mouseup', () => { if (isDragging) onSliderRelease(); });
+
+    // ── step 2: runaway button ──
+    function positionBtn(initial) {
+      const arenaW = btnArena.offsetWidth;
+      const btnW   = confirmBtn.offsetWidth || 90;
+      const maxX   = Math.max(arenaW - btnW - 8, 0);
+
+      let nx;
+      if (initial) {
+        nx = 0;
+      } else {
+        const curX = parseFloat(confirmBtn.style.left) || 0;
+        // pick a side that's far from current pos
+        nx = curX < arenaW / 2 ? maxX : 0;
+        // add a bit of randomness
+        nx = Math.min(maxX, Math.max(0, nx + (Math.random() - 0.5) * 60));
+      }
+      confirmBtn.style.left = Math.round(nx) + 'px';
+    }
+
+    confirmBtn.addEventListener('mouseenter', () => {
+      if (challengeStep !== 2) return;
+      positionBtn(false);
+      s2hint.textContent = 'almost...';
+    });
+
+    confirmBtn.addEventListener('click', () => {
+      if (challengeStep !== 2) return;
+      challengeStep = 3;
+      targetLine.style.display = 'none';
+      typeInput.value = '';
+      s3hint.textContent = `type ${savedTarget} exactly, then press enter`;
+      statusMsg.textContent = '';
+      showStep(3);
+      typeInput.focus();
+      startClearTimer();
+    });
+
+    // ── step 3: self-clearing input ──
+    function startClearTimer() {
+      if (clearTimer) clearInterval(clearTimer);
+      clearTimer = setInterval(() => {
+        if (challengeStep === 3 && typeInput.value !== '') {
+          typeInput.value = '';
+          s3hint.textContent = `cleared — type ${savedTarget} again`;
+        }
+      }, 2600);
+    }
+
+    typeInput.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || challengeStep !== 3) return;
+      const typed = parseInt(typeInput.value);
+      if (typed === savedTarget) {
+        clearInterval(clearTimer);
+        applyVolume(savedTarget);
+      } else {
+        s3hint.textContent = `wrong. type ${savedTarget} exactly.`;
+        typeInput.value = '';
+      }
+    });
+
+    // ── success ──
+    function applyVolume(v) {
+      challengeStep = 4;
+      currentVol = v;
+      player.volume = v / 100;
+      volDisp.textContent = v;
+      hideAllSteps();
+      statusMsg.textContent = `volume set to ${v}%.`;
+      statusMsg.classList.add('success');
+    }
+  </script>
+
+</body>
+</html>
