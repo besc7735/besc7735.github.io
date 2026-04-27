@@ -297,7 +297,7 @@
       sl.addEventListener('input', () => {
         if (!dragging) return;
         dragVal = parseInt(sl.value);
-        s1hint.textContent = `${dragVal}% — let go`;
+        s1hint.textContent = 'drag to set your volume';
       });
 
       function onRelease() {
@@ -306,7 +306,7 @@
         if (cStep !== 1) return;
         savedTarget = dragVal;
         sl.value = currentVol; // snap back
-        s1hint.textContent = `snapped back. (${savedTarget}% saved)`;
+        s1hint.textContent = 'drag to set your volume';
         setTimeout(() => {
           cStep = 2;
           cbtn.style.left = '0px';
