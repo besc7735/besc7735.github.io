@@ -9,140 +9,152 @@
   <link href="https://fonts.googleapis.com/css2?family=Anaheim:wght@400..800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <style>
-    .track-list {
-      display: flex;
-      flex-direction: column;
-      margin-top: 3rem;
-    }
-    .track-row {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 11px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      cursor: pointer;
-      user-select: none;
-      transition: opacity 0.15s;
-    }
-    .track-row:first-child { border-top: 1px solid rgba(255,255,255,0.08); }
-    .track-row:hover { opacity: 0.6; }
-    .track-num {
-      font-size: 12px;
-      color: rgba(255,255,255,0.25);
-      width: 16px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-    .track-row.playing .track-num { visibility: hidden; }
-    .track-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: transparent;
-      flex-shrink: 0;
-      margin-left: -23px;
-    }
-    .track-row.playing .track-dot {
-      background: #fff;
-      animation: pip 1.4s ease-in-out infinite;
-    }
-    @keyframes pip { 0%,100%{opacity:1} 50%{opacity:0.25} }
-    .track-name { font-size: 15px; font-weight: 400; opacity: 0.75; }
-    .track-row.playing .track-name { opacity: 1; }
-
-    .vol-block {
-      display: none;
-      flex-direction: column;
+    /* ── music grid ── */
+    .music-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 1.25rem;
-      margin-top: 2.5rem;
-      max-width: 480px;
+      margin-top: 1.5rem;
     }
-    .vol-number {
-      font-size: 4.5rem;
-      font-weight: 700;
-      line-height: 1;
-      letter-spacing: -0.03em;
-    }
-    .vol-number span {
-      font-size: 1.4rem;
-      font-weight: 400;
-      opacity: 0.35;
-      margin-left: 4px;
-    }
-    .vol-sublabel {
-      font-size: 12px;
-      opacity: 0.3;
-      letter-spacing: 0.06em;
-      margin-top: 4px;
-    }
-    .step { display: none; flex-direction: column; gap: 10px; }
-    .step.on { display: flex; }
-    .step-label { font-size: 12px; opacity: 0.35; }
 
-    input[type=range]#vol-slider {
+    .music-card figure {
+      overflow: hidden;
+      border-radius: 4px 4px 0 0;
+      margin: 0;
+    }
+
+    .music-card figure img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .music-card-controls {
+      background: rgba(0,0,0,0.25);
+      border-radius: 0 0 4px 4px;
+      padding: 10px 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .music-card-name {
+      font-size: 11px;
+      opacity: 0.5;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* play button */
+    .play-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.8);
+      font-family: 'Anaheim', sans-serif;
+      font-size: 11px;
+      padding: 5px 12px;
+      cursor: pointer;
+      border-radius: 2px;
+      white-space: nowrap;
+      width: fit-content;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .play-btn:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
+    .play-btn.playing { border-color: rgba(255,255,255,0.6); color: #fff; }
+
+    /* vol label + slider row */
+    .vol-row {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .vol-row-label {
+      font-size: 11px;
+      opacity: 0.3;
+    }
+
+    /* the chaos slider */
+    .card-slider {
       -webkit-appearance: none;
       appearance: none;
       width: 100%;
       height: 2px;
-      background: rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.12);
       border-radius: 1px;
       outline: none;
       cursor: grab;
+      display: block;
     }
-    input[type=range]#vol-slider:active { cursor: grabbing; }
-    input[type=range]#vol-slider::-webkit-slider-thumb {
+    .card-slider:active { cursor: grabbing; }
+    .card-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 14px; height: 14px;
       border-radius: 50%;
       background: #fff;
       cursor: grab;
     }
-    input[type=range]#vol-slider:active::-webkit-slider-thumb { cursor: grabbing; }
-    input[type=range]#vol-slider::-moz-range-thumb {
-      width: 18px; height: 18px;
+    .card-slider:active::-webkit-slider-thumb { cursor: grabbing; }
+    .card-slider::-moz-range-thumb {
+      width: 14px; height: 14px;
       border-radius: 50%;
       background: #fff;
       border: none;
     }
 
-    .btn-arena { position: relative; height: 40px; }
-    #confirm-btn {
+    /* step 2: confirm button */
+    .btn-arena {
+      position: relative;
+      height: 32px;
+    }
+
+    .confirm-btn {
       position: absolute;
       top: 0; left: 0;
       background: transparent;
-      border: 1px solid rgba(255,255,255,0.3);
-      color: rgba(255,255,255,0.8);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.7);
       font-family: 'Anaheim', sans-serif;
-      font-size: 14px;
-      padding: 7px 20px;
+      font-size: 11px;
+      padding: 5px 12px;
       cursor: pointer;
       border-radius: 2px;
       white-space: nowrap;
       transition: border-color 0.1s, color 0.1s;
     }
-    #confirm-btn:hover { border-color: rgba(255,255,255,0.7); color: #fff; }
+    .confirm-btn:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
 
-    #type-input {
+    /* step 3: type input */
+    .type-input {
       background: transparent;
       border: none;
-      border-bottom: 1px solid rgba(255,255,255,0.25);
+      border-bottom: 1px solid rgba(255,255,255,0.2);
       color: #fff;
       font-family: 'Anaheim', sans-serif;
-      font-size: 2.5rem;
+      font-size: 1.6rem;
       font-weight: 500;
-      width: 110px;
+      width: 80px;
       outline: none;
       padding: 2px 0;
       -moz-appearance: textfield;
     }
-    #type-input::-webkit-inner-spin-button,
-    #type-input::-webkit-outer-spin-button { -webkit-appearance: none; }
-    #type-input::placeholder { color: rgba(255,255,255,0.1); }
-    #type-input:focus { border-bottom-color: rgba(255,255,255,0.6); }
+    .type-input::-webkit-inner-spin-button,
+    .type-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+    .type-input::placeholder { color: rgba(255,255,255,0.1); }
+    .type-input:focus { border-bottom-color: rgba(255,255,255,0.5); }
 
-    .vol-status { font-size: 13px; opacity: 0.4; min-height: 18px; }
-    .vol-status.done { opacity: 0.7; }
+    .card-step { display: none; flex-direction: column; gap: 6px; }
+    .card-step.on { display: flex; }
+    .card-step-label { font-size: 10px; opacity: 0.3; }
+
+    .card-status { font-size: 10px; opacity: 0.35; min-height: 14px; }
+    .card-status.done { opacity: 0.6; }
+
+    @media (max-width: 600px) {
+      .music-grid { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body class="page-interests">
@@ -181,222 +193,199 @@
         </figure>
       </div>
 
-      <p class="interests-bio interests-bio--second">i also love experimental art and music.</p>
-
-      <div class="photo-grid photo-grid--two">
-        <figure>
-          <img src="speedometer.jpg" alt="an album cover of a big green oil tank with a staircase swooping down the side. the words speedometer PRIVATE are in white text on the side of the tank" />
-        </figure>
-        <figure>
-          <img src="cat.jpg" alt="a photo of a green artistic cat on a red background, with piercing yellow eyes" />
-        </figure>
-        <figure>
-          <img src="200electronica.jpg" alt="an old 3d video game rendering of a shimmery blue bird flying over a red wasteland" />
-        </figure>
-        <figure>
-          <img src="tricky.png" alt="a rustic album cover that says the word tricky in all uppercase letters, with a faded red background" />
-        </figure>
-        <figure>
-          <img src="afx.png" alt="album art of the iconic aphex twin logo" />
-        </figure>
-        <figure>
-          <img src="moon.jpg" alt="a minimalist edited photo of a flat wheatfield on a summer day, with a big full moon rising in the background" />
-        </figure>
-      </div>
+      <p class="interests-bio interests-bio--second">i also love experimental art and music. press play to listen, and adjust volume for your comfort.</p>
 
       <audio id="player" preload="none"></audio>
 
-      <div class="track-list" id="track-list"></div>
-
-      <div class="vol-block" id="vol-block">
-        <div>
-          <div class="vol-number" id="vol-display">50<span>%</span></div>
-          <p class="vol-sublabel" id="vol-sublabel">volume</p>
-        </div>
-
-        <div class="step" id="step1">
-          <p class="step-label" id="s1-hint">drag to set your volume</p>
-          <input type="range" id="vol-slider" min="0" max="100" value="50" step="1" />
-        </div>
-
-        <div class="step" id="step2">
-          <p class="step-label" id="s2-hint">confirm your volume</p>
-          <div class="btn-arena" id="btn-arena">
-            <button id="confirm-btn">confirm</button>
-          </div>
-        </div>
-
-        <div class="step" id="step3">
-          <p class="step-label" id="s3-hint">type the exact number and press enter</p>
-          <input type="number" id="type-input" min="0" max="100" placeholder="0–100" autocomplete="off" />
-        </div>
-
-        <p class="vol-status" id="vol-status"></p>
-      </div>
+      <div class="music-grid" id="music-grid"></div>
 
     </div>
   </main>
 
   <script>
     const tracks = [
-      { file: 'Speedometer. - New Hawaii [VleVayJfJx8].m4a', name: 'Speedometer. — New Hawaii' },
-      { file: 'ESPRIT - Secret [TSNUjN4fISw].m4a',           name: 'ESPRIT — Secret' },
-      { file: 'Feed Me [IlB3Exvb4NM].m4a',                   name: 'Feed Me' },
-      { file: 'Aphex Twin - Heliosphan [0Z4cLmbw6q0].m4a',   name: 'Aphex Twin — Heliosphan' },
+      { file: 'Speedometer. - New Hawaii [VleVayJfJx8].m4a', name: 'Speedometer. — New Hawaii', img: 'speedometer.jpg', alt: 'an album cover of a big green oil tank with a staircase swooping down the side' },
+      { file: 'ESPRIT - Secret [TSNUjN4fISw].m4a',           name: 'ESPRIT — Secret',            img: '200electronica.jpg', alt: 'an old 3d video game rendering of a shimmery blue bird flying over a red wasteland' },
+      { file: 'Feed Me [IlB3Exvb4NM].m4a',                   name: 'Feed Me',                    img: 'tricky.png',         alt: 'a rustic album cover that says the word tricky in all uppercase letters, with a faded red background' },
+      { file: 'Aphex Twin - Heliosphan [0Z4cLmbw6q0].m4a',   name: 'Aphex Twin — Heliosphan',    img: 'afx.png',           alt: 'album art of the iconic aphex twin logo' },
     ];
 
-    const player     = document.getElementById('player');
-    const trackList  = document.getElementById('track-list');
-    const volBlock   = document.getElementById('vol-block');
-    const volDisp    = document.getElementById('vol-display');
-    const volSub     = document.getElementById('vol-sublabel');
-    const step1      = document.getElementById('step1');
-    const step2      = document.getElementById('step2');
-    const step3      = document.getElementById('step3');
-    const slider     = document.getElementById('vol-slider');
-    const s1hint     = document.getElementById('s1-hint');
-    const s2hint     = document.getElementById('s2-hint');
-    const s3hint     = document.getElementById('s3-hint');
-    const confirmBtn = document.getElementById('confirm-btn');
-    const btnArena   = document.getElementById('btn-arena');
-    const typeInput  = document.getElementById('type-input');
-    const statusEl   = document.getElementById('vol-status');
+    const player = document.getElementById('player');
+    const grid   = document.getElementById('music-grid');
 
-    let currentVol  = 50;
-    let savedTarget = 50;
-    let cStep       = 0;
-    let clearTimer  = null;
-    let dragging    = false;
-    let dragVal     = 50;
-
+    let currentVol = 50;
+    let currentCard = -1;
     player.volume = 0.5;
 
+    // each card gets its own isolated challenge state
     tracks.forEach((t, i) => {
-      const row = document.createElement('div');
-      row.className = 'track-row';
-      row.innerHTML = `<span class="track-num">${i + 1}</span><span class="track-dot"></span><span class="track-name">${t.name}</span>`;
-      row.addEventListener('click', () => playTrack(i));
-      trackList.appendChild(row);
-    });
+      const card = document.createElement('div');
+      card.className = 'music-card';
+      card.innerHTML = `
+        <figure><img src="${t.img}" alt="${t.alt}" /></figure>
+        <div class="music-card-controls">
+          <span class="music-card-name">${t.name}</span>
+          <button class="play-btn">click to play</button>
+          <div class="vol-row">
+            <span class="vol-row-label">adjust volume</span>
+            <div class="card-step on" id="step1-${i}">
+              <span class="card-step-label" id="s1hint-${i}">drag to set your volume</span>
+              <input type="range" class="card-slider" id="slider-${i}" min="0" max="100" value="${currentVol}" step="1" />
+            </div>
+            <div class="card-step" id="step2-${i}">
+              <span class="card-step-label" id="s2hint-${i}">confirm your volume</span>
+              <div class="btn-arena" id="arena-${i}">
+                <button class="confirm-btn" id="cbtn-${i}">confirm</button>
+              </div>
+            </div>
+            <div class="card-step" id="step3-${i}">
+              <span class="card-step-label" id="s3hint-${i}">type the exact number and press enter</span>
+              <input type="number" class="type-input" id="tinput-${i}" min="0" max="100" placeholder="0–100" autocomplete="off" />
+            </div>
+            <span class="card-status" id="status-${i}"></span>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
 
-    function playTrack(i) {
-      document.querySelectorAll('.track-row').forEach((r, j) => r.classList.toggle('playing', j === i));
-      player.src = tracks[i].file;
-      player.volume = currentVol / 100;
-      player.play();
-      if (cStep === 0) startChallenge();
-    }
+      // elements
+      const playBtn    = card.querySelector('.play-btn');
+      const sl         = card.querySelector('.card-slider');
+      const s1         = document.getElementById(`step1-${i}`);
+      const s2         = document.getElementById(`step2-${i}`);
+      const s3         = document.getElementById(`step3-${i}`);
+      const s1hint     = document.getElementById(`s1hint-${i}`);
+      const s2hint     = document.getElementById(`s2hint-${i}`);
+      const s3hint     = document.getElementById(`s3hint-${i}`);
+      const arena      = document.getElementById(`arena-${i}`);
+      const cbtn       = document.getElementById(`cbtn-${i}`);
+      const tinput     = document.getElementById(`tinput-${i}`);
+      const statusEl   = document.getElementById(`status-${i}`);
 
-    function setVolDisplay(v) {
-      volDisp.innerHTML = `${v}<span>%</span>`;
-    }
+      // per-card state
+      let cStep       = 1;
+      let savedTarget = currentVol;
+      let dragging    = false;
+      let dragVal     = currentVol;
+      let clearTimer  = null;
+      let fleeTimer   = null;
 
-    function showOnly(el) {
-      [step1, step2, step3].forEach(s => s.classList.remove('on'));
-      if (el) el.classList.add('on');
-    }
+      function showOnly(el) {
+        [s1, s2, s3].forEach(s => s.classList.remove('on'));
+        if (el) el.classList.add('on');
+      }
 
-    function startChallenge() {
-      cStep = 1;
-      volBlock.style.display = 'flex';
-      slider.value = currentVol;
-      dragVal = currentVol;
-      setVolDisplay(currentVol);
-      volSub.textContent = 'volume';
-      statusEl.textContent = '';
-      statusEl.classList.remove('done');
-      showOnly(step1);
-      s1hint.textContent = 'drag to set your volume';
-    }
-
-    slider.addEventListener('mousedown', () => { dragging = true; });
-    slider.addEventListener('touchstart', () => { dragging = true; }, { passive: true });
-    slider.addEventListener('input', () => {
-      if (!dragging) return;
-      dragVal = parseInt(slider.value);
-      setVolDisplay(dragVal);
-      s1hint.textContent = `${dragVal}% — let go`;
-    });
-
-    function onRelease() {
-      if (!dragging) return;
-      dragging = false;
-      if (cStep !== 1) return;
-      savedTarget = dragVal;
-      setVolDisplay(currentVol);
-      slider.value = currentVol;
-      s1hint.textContent = `snapped back. (${savedTarget}% saved)`;
-      setTimeout(() => {
-        cStep = 2;
-        volSub.textContent = `target: ${savedTarget}%`;
-        confirmBtn.style.left = '0px';
-        s2hint.textContent = `confirm ${savedTarget}%`;
-        statusEl.textContent = '';
-        showOnly(step2);
-      }, 700);
-    }
-
-    slider.addEventListener('mouseup', onRelease);
-    slider.addEventListener('touchend', onRelease);
-    document.addEventListener('mouseup', onRelease);
-
-    let fleeTimer = null;
-    confirmBtn.addEventListener('mouseenter', () => {
-      if (cStep !== 2) return;
-      fleeTimer = setTimeout(() => {
-        const maxX = btnArena.offsetWidth - confirmBtn.offsetWidth - 4;
-        const cur  = parseFloat(confirmBtn.style.left) || 0;
-        let nx = cur < maxX / 2 ? maxX : 0;
-        nx = Math.max(0, Math.min(maxX, nx + (Math.random() - 0.5) * 50));
-        confirmBtn.style.left = Math.round(nx) + 'px';
-        s2hint.textContent = 'almost...';
-      }, 96);
-    });
-    confirmBtn.addEventListener('mouseleave', () => { clearTimeout(fleeTimer); });
-
-    confirmBtn.addEventListener('click', () => {
-      if (cStep !== 2) return;
-      cStep = 3;
-      typeInput.value = '';
-      s3hint.textContent = `type ${savedTarget} exactly, then press enter`;
-      statusEl.textContent = '';
-      showOnly(step3);
-      typeInput.focus();
-      startClearTimer();
-    });
-
-    function startClearTimer() {
-      if (clearTimer) clearInterval(clearTimer);
-      clearTimer = setInterval(() => {
-        if (cStep === 3 && typeInput.value !== '') {
-          typeInput.value = '';
-          s3hint.textContent = `cleared — type ${savedTarget} again`;
+      // ── play button ──
+      playBtn.addEventListener('click', () => {
+        if (currentCard !== i) {
+          grid.querySelectorAll('.play-btn').forEach(b => { b.textContent = 'click to play'; b.classList.remove('playing'); });
+          player.src = t.file;
+          currentCard = i;
         }
-      }, 200);
-    }
+        player.volume = currentVol / 100;
+        player.play();
+        playBtn.classList.add('playing');
+      });
 
-    typeInput.addEventListener('keydown', e => {
-      if (e.key !== 'Enter' || cStep !== 3) return;
-      const typed = parseInt(typeInput.value);
-      if (typed === savedTarget) {
-        clearInterval(clearTimer);
-        applyVolume(savedTarget);
-      } else {
-        typeInput.value = '';
-        s3hint.textContent = `wrong — type ${savedTarget} exactly`;
+      player.addEventListener('ended', () => {
+        if (currentCard === i) { playBtn.textContent = 'click to play'; playBtn.classList.remove('playing'); }
+      });
+
+      // ── step 1: slider snaps back ──
+      sl.addEventListener('mousedown', () => { dragging = true; });
+      sl.addEventListener('touchstart', () => { dragging = true; }, { passive: true });
+      sl.addEventListener('input', () => {
+        if (!dragging) return;
+        dragVal = parseInt(sl.value);
+        s1hint.textContent = `${dragVal}% — let go`;
+      });
+
+      function onRelease() {
+        if (!dragging) return;
+        dragging = false;
+        if (cStep !== 1) return;
+        savedTarget = dragVal;
+        sl.value = currentVol; // snap back
+        s1hint.textContent = `snapped back. (${savedTarget}% saved)`;
+        setTimeout(() => {
+          cStep = 2;
+          cbtn.style.left = '0px';
+          s2hint.textContent = `confirm ${savedTarget}%`;
+          statusEl.textContent = '';
+          showOnly(s2);
+        }, 700);
+      }
+
+      sl.addEventListener('mouseup', onRelease);
+      sl.addEventListener('touchend', onRelease);
+      document.addEventListener('mouseup', () => { if (dragging) onRelease(); });
+
+      // ── step 2: runaway button ──
+      cbtn.addEventListener('mouseenter', () => {
+        if (cStep !== 2) return;
+        fleeTimer = setTimeout(() => {
+          const maxX = arena.offsetWidth - cbtn.offsetWidth - 4;
+          const cur  = parseFloat(cbtn.style.left) || 0;
+          let nx = cur < maxX / 2 ? maxX : 0;
+          nx = Math.max(0, Math.min(maxX, nx + (Math.random() - 0.5) * 50));
+          cbtn.style.left = Math.round(nx) + 'px';
+          s2hint.textContent = 'almost...';
+        }, 96);
+      });
+      cbtn.addEventListener('mouseleave', () => { clearTimeout(fleeTimer); });
+
+      cbtn.addEventListener('click', () => {
+        if (cStep !== 2) return;
+        cStep = 3;
+        tinput.value = '';
+        s3hint.textContent = `type ${savedTarget} exactly, then press enter`;
+        statusEl.textContent = '';
+        showOnly(s3);
+        tinput.focus();
+        startClearTimer();
+      });
+
+      // ── step 3: self-clearing input ──
+      function startClearTimer() {
+        if (clearTimer) clearInterval(clearTimer);
+        clearTimer = setInterval(() => {
+          if (cStep === 3 && tinput.value !== '') {
+            tinput.value = '';
+            s3hint.textContent = `cleared — type ${savedTarget} again`;
+          }
+        }, 200);
+      }
+
+      tinput.addEventListener('keydown', e => {
+        if (e.key !== 'Enter' || cStep !== 3) return;
+        const typed = parseInt(tinput.value);
+        if (typed === savedTarget) {
+          clearInterval(clearTimer);
+          applyVolume(savedTarget);
+        } else {
+          tinput.value = '';
+          s3hint.textContent = `wrong — type ${savedTarget} exactly`;
+        }
+      });
+
+      // ── success ──
+      function applyVolume(v) {
+        cStep = 4;
+        currentVol = v;
+        player.volume = v / 100;
+        sl.value = v;
+        s1hint.textContent = 'drag to set your volume';
+        statusEl.textContent = `volume set to ${v}%.`;
+        statusEl.classList.add('done');
+        showOnly(s1);
+        // reset for next attempt
+        setTimeout(() => { cStep = 1; savedTarget = v; dragVal = v; }, 100);
       }
     });
 
-    function applyVolume(v) {
-      cStep = 4;
-      currentVol = v;
-      player.volume = v / 100;
-      setVolDisplay(v);
-      volSub.textContent = 'volume';
-      showOnly(null);
-      statusEl.textContent = `volume set to ${v}%.`;
-      statusEl.classList.add('done');
-    }
+    player.addEventListener('ended', () => {
+      currentCard = -1;
+    });
   </script>
 
 </body>
